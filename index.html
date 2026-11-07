@@ -16,7 +16,10 @@
       --accent-color: #087e8b;
       --bg-light: #f8fafc;
     }
-    body {
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto !important; /* Memastikan scroll vertikal selalu aktif */
       background-color: var(--bg-light);
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
@@ -68,11 +71,12 @@
     .loader-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.9);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 9999;
+      pointer-events: auto;
     }
     .quick-link-card {
       border-radius: 12px;
@@ -84,6 +88,11 @@
       transform: translateY(-3px);
       box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
     }
+    .chart-container-box {
+      position: relative;
+      height: 320px;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
@@ -92,7 +101,8 @@
   <div id="loader" class="loader-overlay">
     <div class="text-center">
       <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
-      <p class="mt-2 fw-semibold text-muted" id="loaderText">Menghubungkan ke Database SERUTI...</p>
+      <p class="mt-3 fw-semibold text-muted" id="loaderText">Menghubungkan ke Database SERUTI...</p>
+      <button class="btn btn-sm btn-outline-secondary mt-2" onclick="forceDismissLoader()">Tutup Loading & Lihat Halaman</button>
     </div>
   </div>
 
@@ -178,7 +188,7 @@
           <label class="btn btn-outline-primary fw-semibold" for="btnChartPML"><i class="bi bi-person-badge"></i> Per PML</label>
         </div>
       </div>
-      <div style="height: 320px;">
+      <div class="chart-container-box">
         <canvas id="progressChart"></canvas>
       </div>
     </div>
@@ -213,7 +223,7 @@
     </ul>
 
     <!-- Tab Contents -->
-    <div class="tab-content" id="mainTabContent">
+    <div class="tab-content pb-5" id="mainTabContent">
       
       <!-- 1. TAB ALOKASI -->
       <div class="tab-pane fade show active" id="tab-alokasi">
@@ -229,7 +239,9 @@
                   <th>NKS</th><th>Kecamatan</th><th>Desa</th><th>SLS</th><th>PCL</th><th>PML</th>
                 </tr>
               </thead>
-              <tbody id="bodyAlokasi"></tbody>
+              <tbody id="bodyAlokasi">
+                <tr><td colspan="6" class="text-center text-muted py-4">Memuat data alokasi...</td></tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -254,7 +266,9 @@
                   <th>R6</th><th>R7</th><th>R8</th><th>R9</th><th>R10</th>
                 </tr>
               </thead>
-              <tbody id="bodyPendataan"></tbody>
+              <tbody id="bodyPendataan">
+                <tr><td colspan="14" class="text-center text-muted py-4">Memuat data progres pendataan...</td></tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -279,7 +293,9 @@
                   <th>R6</th><th>R7</th><th>R8</th><th>R9</th><th>R10</th>
                 </tr>
               </thead>
-              <tbody id="bodyKab"></tbody>
+              <tbody id="bodyKab">
+                <tr><td colspan="14" class="text-center text-muted py-4">Memuat data penerimaan kabupaten...</td></tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -304,7 +320,9 @@
                   <th>R6</th><th>R7</th><th>R8</th><th>R9</th><th>R10</th>
                 </tr>
               </thead>
-              <tbody id="bodyIpds"></tbody>
+              <tbody id="bodyIpds">
+                <tr><td colspan="14" class="text-center text-muted py-4">Memuat data penerimaan IPDS...</td></tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -451,26 +469,34 @@
   <script>
     // =========================================================================
     // TEMPELKAN URL WEB APP APPS SCRIPT ANDA DI SINI:
-    // Contoh: "https://script.google.com/macros/s/AKfycbx.../exec"
+    // Pastikan berakhiran /exec
     // =========================================================================
     const API_URL = "ISI_DENGAN_URL_DEPLOY_APPS_SCRIPT_ANDA";
 
     let globalData = null;
     let chartInstance = null;
 
-    // Memuat data saat halaman dibuka
+    function forceDismissLoader() {
+      const loader = document.getElementById('loader');
+      if (loader) {
+        loader.style.display = 'none';
+        loader.remove(); // Hapus elemen agar scroll tidak terhalang
+      }
+    }
+
+    // Auto-dismiss loader maksimal 4 detik agar halaman di bawahnya PASTI bisa di-scroll
+    setTimeout(forceDismissLoader, 4000);
+
     window.addEventListener('DOMContentLoaded', () => {
-      // Cek apakah dijalankan di Apps Script langsung atau GitHub Pages
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
           .withSuccessHandler(onInitialDataLoaded)
           .withFailureHandler(handleLoadError)
           .getInitialData();
       } else {
-        // Mode GitHub Pages via Fetch API
         if (!API_URL || API_URL.includes("ISI_DENGAN_URL")) {
-          document.getElementById('loader').style.display = 'none';
-          alert("PERHATIAN: Harap masukkan URL Web App Apps Script ke variabel API_URL di dalam file index.html terlebih dahulu.");
+          forceDismissLoader();
+          console.warn("API_URL belum dikonfigurasi.");
           return;
         }
 
@@ -482,8 +508,8 @@
     });
 
     function handleLoadError(err) {
-      document.getElementById('loader').style.display = 'none';
-      alert("Gagal memuat data dari Spreadsheet: " + (err.message || err));
+      forceDismissLoader();
+      console.error("Gagal memuat API:", err);
     }
 
     function showToast(msg, isSuccess = true) {
@@ -496,40 +522,48 @@
 
     function onInitialDataLoaded(data) {
       globalData = data;
-      document.getElementById('loader').style.display = 'none';
+      forceDismissLoader();
 
       if (data.linkLK) document.getElementById('cardUploadLK').href = data.linkLK;
       if (data.linkAnomali) document.getElementById('cardAnomali').href = data.linkAnomali;
 
-      document.getElementById('kpiPendataan').innerText = data.summary.pendataan.persen + '%';
-      document.getElementById('subPendataan').innerText = `${data.summary.pendataan.terisi} / ${data.summary.pendataan.target} RUTA`;
-      document.getElementById('barPendataan').style.width = data.summary.pendataan.persen + '%';
+      if (data.summary) {
+        document.getElementById('kpiPendataan').innerText = (data.summary.pendataan ? data.summary.pendataan.persen : 0) + '%';
+        document.getElementById('subPendataan').innerText = `${data.summary.pendataan ? data.summary.pendataan.terisi : 0} / ${data.summary.pendataan ? data.summary.pendataan.target : 0} RUTA`;
+        document.getElementById('barPendataan').style.width = (data.summary.pendataan ? data.summary.pendataan.persen : 0) + '%';
 
-      document.getElementById('kpiKab').innerText = data.summary.kab.persen + '%';
-      document.getElementById('subKab').innerText = `${data.summary.kab.terisi} / ${data.summary.kab.target} RUTA`;
-      document.getElementById('barKab').style.width = data.summary.kab.persen + '%';
+        document.getElementById('kpiKab').innerText = (data.summary.kab ? data.summary.kab.persen : 0) + '%';
+        document.getElementById('subKab').innerText = `${data.summary.kab ? data.summary.kab.terisi : 0} / ${data.summary.kab ? data.summary.kab.target : 0} RUTA`;
+        document.getElementById('barKab').style.width = (data.summary.kab ? data.summary.kab.persen : 0) + '%';
 
-      document.getElementById('kpiIpds').innerText = data.summary.ipds.persen + '%';
-      document.getElementById('subIpds').innerText = `${data.summary.ipds.terisi} / ${data.summary.ipds.target} RUTA`;
-      document.getElementById('barIpds').style.width = data.summary.ipds.persen + '%';
+        document.getElementById('kpiIpds').innerText = (data.summary.ipds ? data.summary.ipds.persen : 0) + '%';
+        document.getElementById('subIpds').innerText = `${data.summary.ipds ? data.summary.ipds.terisi : 0} / ${data.summary.ipds ? data.summary.ipds.target : 0} RUTA`;
+        document.getElementById('barIpds').style.width = (data.summary.ipds ? data.summary.ipds.persen : 0) + '%';
+      }
 
-      const dl = document.getElementById('officerList');
-      const allOfficers = Array.from(new Set([...data.officers.pcl, ...data.officers.pml]));
-      allOfficers.forEach(name => {
-        const opt = document.createElement('option');
-        opt.value = name;
-        dl.appendChild(opt);
-      });
+      if (data.officers) {
+        const dl = document.getElementById('officerList');
+        dl.innerHTML = '';
+        const allOfficers = Array.from(new Set([...(data.officers.pcl || []), ...(data.officers.pml || [])]));
+        allOfficers.forEach(name => {
+          const opt = document.createElement('option');
+          opt.value = name;
+          dl.appendChild(opt);
+        });
+      }
 
-      initChart(data.chartDataPCL);
+      if (data.chartDataPCL) {
+        initChart(data.chartDataPCL);
+      }
 
-      renderAlokasi(data.alokasi);
-      renderProgresTable('Progres pendataan', data.progresPendataan, 'bodyPendataan');
-      renderProgresTable('Progres penerimaan kab', data.progresPenerimaanKab, 'bodyKab');
-      renderProgresTable('Progres penerimaan IPDS', data.progresIPDS, 'bodyIpds');
+      if (data.alokasi) renderAlokasi(data.alokasi);
+      if (data.progresPendataan) renderProgresTable('Progres pendataan', data.progresPendataan, 'bodyPendataan');
+      if (data.progresPenerimaanKab) renderProgresTable('Progres penerimaan kab', data.progresPenerimaanKab, 'bodyKab');
+      if (data.progresIPDS) renderProgresTable('Progres penerimaan IPDS', data.progresIPDS, 'bodyIpds');
     }
 
     function initChart(aggregateData) {
+      if (!aggregateData) return;
       const labels = Object.keys(aggregateData);
       const dataPendataan = labels.map(k => aggregateData[k].pendataan);
       const dataKab = labels.map(k => aggregateData[k].kab);
@@ -567,16 +601,7 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'top' },
-            tooltip: {
-              callbacks: {
-                afterLabel: function(ctx) {
-                  const officer = labels[ctx.dataIndex];
-                  const target = aggregateData[officer].target;
-                  return `Target: ${target} RUTA`;
-                }
-              }
-            }
+            legend: { position: 'top' }
           },
           scales: {
             y: {
@@ -593,9 +618,9 @@
 
     function switchChart(type) {
       if (!globalData) return;
-      if (type === 'pcl') {
+      if (type === 'pcl' && globalData.chartDataPCL) {
         initChart(globalData.chartDataPCL);
-      } else {
+      } else if (type === 'pml' && globalData.chartDataPML) {
         initChart(globalData.chartDataPML);
       }
     }
@@ -603,6 +628,10 @@
     function renderAlokasi(rows) {
       const tbody = document.getElementById('bodyAlokasi');
       tbody.innerHTML = '';
+      if (!rows || rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data alokasi.</td></tr>';
+        return;
+      }
       rows.forEach(r => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -620,6 +649,10 @@
     function renderProgresTable(sheetName, list, tbodyId) {
       const tbody = document.getElementById(tbodyId);
       tbody.innerHTML = '';
+      if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="14" class="text-center text-muted py-3">Tidak ada data progres.</td></tr>';
+        return;
+      }
 
       list.forEach(row => {
         const tr = document.createElement('tr');
@@ -679,7 +712,7 @@
 
     function handleSaveRes(res, val, inputEl) {
       inputEl.disabled = false;
-      if (res.success) {
+      if (res && res.success) {
         if (val) {
           inputEl.classList.add('has-date');
         } else {
@@ -687,7 +720,7 @@
         }
         showToast("Tanggal berhasil disimpan ke Google Sheets!");
       } else {
-        showToast("Gagal simpan: " + res.message, false);
+        showToast("Gagal simpan: " + (res ? res.message : "Error"), false);
       }
     }
 
@@ -698,8 +731,10 @@
 
     document.getElementById('formDokumentasi').addEventListener('submit', async function(e) {
       e.preventDefault();
-      document.getElementById('loader').style.display = 'flex';
-      document.getElementById('loaderText').innerText = 'Mengirim data & foto dokumentasi...';
+      
+      const btnSubmit = this.querySelector('button[type="submit"]');
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Mengirim...';
 
       const readFileBase64 = (file) => new Promise((resolve) => {
         if (!file) return resolve(null);
@@ -727,10 +762,25 @@
         foto2Name: res2 ? res2.name : null
       };
 
+      const onComplete = (res) => {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = '<i class="bi bi-cloud-arrow-up-fill me-1"></i> Kirim Laporan Dokumentasi';
+        if (res && res.success) {
+          showToast("Laporan dokumentasi berhasil disimpan!");
+          document.getElementById('formDokumentasi').reset();
+        } else {
+          showToast("Gagal: " + (res ? res.message : "Error simpan"), false);
+        }
+      };
+
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
-          .withSuccessHandler(handleDocRes)
-          .withFailureHandler(handleDocErr)
+          .withSuccessHandler(onComplete)
+          .withFailureHandler(err => {
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = '<i class="bi bi-cloud-arrow-up-fill me-1"></i> Kirim Laporan Dokumentasi';
+            showToast("Error: " + err.message, false);
+          })
           .submitDokumentasi(formPayload);
       } else {
         fetch(API_URL, {
@@ -738,25 +788,14 @@
           body: JSON.stringify({ action: 'submitDokumentasi', payload: formPayload })
         })
         .then(res => res.json())
-        .then(handleDocRes)
-        .catch(handleDocErr);
+        .then(onComplete)
+        .catch(err => {
+          btnSubmit.disabled = false;
+          btnSubmit.innerHTML = '<i class="bi bi-cloud-arrow-up-fill me-1"></i> Kirim Laporan Dokumentasi';
+          showToast("Error koneksi: " + (err.message || err), false);
+        });
       }
     });
-
-    function handleDocRes(res) {
-      document.getElementById('loader').style.display = 'none';
-      if (res.success) {
-        showToast("Laporan dokumentasi & foto berhasil tersimpan!");
-        document.getElementById('formDokumentasi').reset();
-      } else {
-        showToast("Gagal: " + res.message, false);
-      }
-    }
-
-    function handleDocErr(err) {
-      document.getElementById('loader').style.display = 'none';
-      showToast("Error: " + (err.message || err), false);
-    }
 
     function setupSearch(inputId, tbodyId) {
       document.getElementById(inputId).addEventListener('keyup', function() {
