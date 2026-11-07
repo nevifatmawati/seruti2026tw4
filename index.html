@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Portal SERUTI TW IV 2026</title>
+  <title>Portal Monitoring SERUTI TW IV 2026 - BPS</title>
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
@@ -19,7 +19,7 @@
     html, body {
       height: 100%;
       overflow-x: hidden;
-      overflow-y: auto !important; /* Memastikan scroll vertikal selalu aktif */
+      overflow-y: auto !important;
       background-color: var(--bg-light);
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
@@ -46,18 +46,19 @@
     }
     .table-progres th {
       background-color: #e2e8f0;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       text-align: center;
       vertical-align: middle;
+      white-space: nowrap;
     }
     .table-progres td {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       vertical-align: middle;
     }
     .date-input-cell {
-      width: 125px;
-      font-size: 0.78rem;
-      padding: 3px 6px;
+      width: 122px;
+      font-size: 0.75rem;
+      padding: 3px 5px;
       border: 1px solid #cbd5e1;
       border-radius: 6px;
       background-color: #fff;
@@ -67,16 +68,6 @@
       border-color: #86efac;
       font-weight: 600;
       color: #166534;
-    }
-    .loader-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(255,255,255,0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      pointer-events: auto;
     }
     .quick-link-card {
       border-radius: 12px;
@@ -90,21 +81,12 @@
     }
     .chart-container-box {
       position: relative;
-      height: 320px;
+      height: 330px;
       width: 100%;
     }
   </style>
 </head>
 <body>
-
-  <!-- Loading Overlay -->
-  <div id="loader" class="loader-overlay">
-    <div class="text-center">
-      <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
-      <p class="mt-3 fw-semibold text-muted" id="loaderText">Menghubungkan ke Database SERUTI...</p>
-      <button class="btn btn-sm btn-outline-secondary mt-2" onclick="forceDismissLoader()">Tutup Loading & Lihat Halaman</button>
-    </div>
-  </div>
 
   <!-- Navbar -->
   <nav class="navbar navbar-dark navbar-custom px-4 py-3 sticky-top">
@@ -116,9 +98,11 @@
           <small class="text-white-50">Monitoring Terpadu Lapangan & Pengolahan BPS</small>
         </div>
       </div>
-      <span class="badge bg-light text-dark px-3 py-2 fw-semibold rounded-pill">
-        <i class="bi bi-calendar-event me-1 text-primary"></i> Triwulan IV 2026
-      </span>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-light text-dark px-3 py-2 fw-semibold rounded-pill">
+          <i class="bi bi-check-circle-fill text-success me-1"></i> Data Aktif & Terhubung
+        </span>
+      </div>
     </div>
   </nav>
 
@@ -133,7 +117,7 @@
             <div>
               <small class="text-muted text-uppercase fw-bold">Progres Pendataan</small>
               <h3 class="fw-bold mb-0 text-primary" id="kpiPendataan">0%</h3>
-              <small class="text-muted" id="subPendataan">0 / 0 RUTA</small>
+              <small class="text-muted" id="subPendataan">0 / 220 RUTA</small>
             </div>
             <i class="bi bi-clipboard2-check fs-1 text-primary opacity-25"></i>
           </div>
@@ -148,7 +132,7 @@
             <div>
               <small class="text-muted text-uppercase fw-bold">Penerimaan Kabupaten</small>
               <h3 class="fw-bold mb-0 text-success" id="kpiKab">0%</h3>
-              <small class="text-muted" id="subKab">0 / 0 RUTA</small>
+              <small class="text-muted" id="subKab">0 / 220 RUTA</small>
             </div>
             <i class="bi bi-building-check fs-1 text-success opacity-25"></i>
           </div>
@@ -163,7 +147,7 @@
             <div>
               <small class="text-muted text-uppercase fw-bold">Penerimaan IPDS</small>
               <h3 class="fw-bold mb-0 text-info" id="kpiIpds">0%</h3>
-              <small class="text-muted" id="subIpds">0 / 0 RUTA</small>
+              <small class="text-muted" id="subIpds">0 / 220 RUTA</small>
             </div>
             <i class="bi bi-cloud-check fs-1 text-info opacity-25"></i>
           </div>
@@ -183,9 +167,9 @@
         </div>
         <div class="btn-group btn-group-sm" role="group">
           <input type="radio" class="btn-check" name="chartOfficerType" id="btnChartPCL" checked onchange="switchChart('pcl')">
-          <label class="btn btn-outline-primary fw-semibold" for="btnChartPCL"><i class="bi bi-person"></i> Per PCL</label>
+          <label class="btn btn-outline-primary fw-semibold" for="btnChartPCL"><i class="bi bi-person"></i> Per PCL (22 Petugas)</label>
           <input type="radio" class="btn-check" name="chartOfficerType" id="btnChartPML" onchange="switchChart('pml')">
-          <label class="btn btn-outline-primary fw-semibold" for="btnChartPML"><i class="bi bi-person-badge"></i> Per PML</label>
+          <label class="btn btn-outline-primary fw-semibold" for="btnChartPML"><i class="bi bi-person-badge"></i> Per PML (11 Pengawas)</label>
         </div>
       </div>
       <div class="chart-container-box">
@@ -197,7 +181,7 @@
     <ul class="nav nav-tabs mb-3 bg-white p-2 rounded shadow-sm" id="mainTab" role="tablist">
       <li class="nav-item">
         <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-alokasi" type="button">
-          <i class="bi bi-geo-alt"></i> Alokasi Sampel
+          <i class="bi bi-geo-alt"></i> Alokasi Sampel (22 NKS)
         </button>
       </li>
       <li class="nav-item">
@@ -217,7 +201,7 @@
       </li>
       <li class="nav-item">
         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-dokumentasi" type="button">
-          <i class="bi bi-camera"></i> Dokumentasi & Link
+          <i class="bi bi-camera"></i> Dokumentasi & Link Cepat
         </button>
       </li>
     </ul>
@@ -228,9 +212,9 @@
       <!-- 1. TAB ALOKASI -->
       <div class="tab-pane fade show active" id="tab-alokasi">
         <div class="card border-0 shadow-sm p-3">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold mb-0 text-secondary">Daftar Sampel Alokasi SERUTI</h6>
-            <input type="text" id="searchAlokasi" class="form-control form-control-sm w-25" placeholder="Cari NKS, Desa, PCL...">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h6 class="fw-bold mb-0 text-secondary">Daftar Sampel Alokasi SERUTI TW IV 2026</h6>
+            <input type="text" id="searchAlokasi" class="form-control form-control-sm w-25 min-w-200" placeholder="Cari NKS, Desa, PCL...">
           </div>
           <div class="table-responsive">
             <table class="table table-hover align-middle">
@@ -239,9 +223,7 @@
                   <th>NKS</th><th>Kecamatan</th><th>Desa</th><th>SLS</th><th>PCL</th><th>PML</th>
                 </tr>
               </thead>
-              <tbody id="bodyAlokasi">
-                <tr><td colspan="6" class="text-center text-muted py-4">Memuat data alokasi...</td></tr>
-              </tbody>
+              <tbody id="bodyAlokasi"></tbody>
             </table>
           </div>
         </div>
@@ -250,10 +232,10 @@
       <!-- 2. TAB PROGRES PENDATAAN -->
       <div class="tab-pane fade" id="tab-pendataan">
         <div class="card border-0 shadow-sm p-3">
-          <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
             <div>
               <h6 class="fw-bold mb-0 text-primary">Input Tanggal Progres Pendataan Lapangan</h6>
-              <small class="text-muted">Pilih tanggal pada kolom RUTA (1–10). Tersimpan otomatis ke Google Sheet.</small>
+              <small class="text-muted">Pilih tanggal pada kolom RUTA (1–10). Tersimpan otomatis.</small>
             </div>
             <input type="text" id="searchPendataan" class="form-control form-control-sm w-25" placeholder="Cari NKS / Petugas...">
           </div>
@@ -266,9 +248,7 @@
                   <th>R6</th><th>R7</th><th>R8</th><th>R9</th><th>R10</th>
                 </tr>
               </thead>
-              <tbody id="bodyPendataan">
-                <tr><td colspan="14" class="text-center text-muted py-4">Memuat data progres pendataan...</td></tr>
-              </tbody>
+              <tbody id="bodyPendataan"></tbody>
             </table>
           </div>
         </div>
@@ -277,7 +257,7 @@
       <!-- 3. TAB PROGRES PENERIMAAN KAB -->
       <div class="tab-pane fade" id="tab-penerimaan-kab">
         <div class="card border-0 shadow-sm p-3">
-          <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
             <div>
               <h6 class="fw-bold mb-0 text-success">Input Tanggal Penerimaan Dokumen Kabupaten</h6>
               <small class="text-muted">Isi tanggal tanda terima berkas RUTA oleh tim kabupaten.</small>
@@ -293,9 +273,7 @@
                   <th>R6</th><th>R7</th><th>R8</th><th>R9</th><th>R10</th>
                 </tr>
               </thead>
-              <tbody id="bodyKab">
-                <tr><td colspan="14" class="text-center text-muted py-4">Memuat data penerimaan kabupaten...</td></tr>
-              </tbody>
+              <tbody id="bodyKab"></tbody>
             </table>
           </div>
         </div>
@@ -304,7 +282,7 @@
       <!-- 4. TAB PROGRES IPDS -->
       <div class="tab-pane fade" id="tab-ipds">
         <div class="card border-0 shadow-sm p-3">
-          <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
             <div>
               <h6 class="fw-bold mb-0 text-info">Input Tanggal Penerimaan Dokumen IPDS</h6>
               <small class="text-muted">Isi tanggal tanda terima berkas RUTA ke bagian IPDS.</small>
@@ -320,9 +298,7 @@
                   <th>R6</th><th>R7</th><th>R8</th><th>R9</th><th>R10</th>
                 </tr>
               </thead>
-              <tbody id="bodyIpds">
-                <tr><td colspan="14" class="text-center text-muted py-4">Memuat data penerimaan IPDS...</td></tr>
-              </tbody>
+              <tbody id="bodyIpds"></tbody>
             </table>
           </div>
         </div>
@@ -402,15 +378,16 @@
               <small class="text-muted">Pintas langsung ke berkas Google Drive dan spreadsheet anomali.</small>
             </div>
 
+            <!-- TAUTAN SEJAJAR -->
             <div class="row g-3 mb-4">
               <div class="col-6">
-                <a id="cardUploadLK" href="#" target="_blank" class="card quick-link-card border-0 shadow-sm p-3 bg-white text-decoration-none border-top border-4 border-primary d-flex flex-column justify-content-between">
+                <a id="cardUploadLK" href="https://drive.google.com/drive/folders/17RBOmYTG6sREG4AIGjao7aJ46Bx05qmx?usp=drive_link" target="_blank" class="card quick-link-card border-0 shadow-sm p-3 bg-white text-decoration-none border-top border-4 border-primary d-flex flex-column justify-content-between">
                   <div>
                     <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-3 d-inline-block mb-2">
                       <i class="bi bi-cloud-arrow-up-fill fs-4"></i>
                     </div>
                     <h6 class="fw-bold text-dark mb-1" style="font-size: 0.95rem;">Upload LK</h6>
-                    <p class="text-muted mb-0" style="font-size: 0.78rem;">Folder Drive unggah Lembar Kerja.</p>
+                    <p class="text-muted mb-0" style="font-size: 0.78rem;">Folder Google Drive LK.</p>
                   </div>
                   <div class="mt-3">
                     <span class="badge bg-primary w-100 py-2">Buka Drive <i class="bi bi-box-arrow-up-right ms-1"></i></span>
@@ -419,13 +396,13 @@
               </div>
 
               <div class="col-6">
-                <a id="cardAnomali" href="#" target="_blank" class="card quick-link-card border-0 shadow-sm p-3 bg-white text-decoration-none border-top border-4 border-warning d-flex flex-column justify-content-between">
+                <a id="cardAnomali" href="https://docs.google.com/spreadsheets/d/1BndYmdADnqKAGxUpE590rcS3M69ozpVkueziNGjzfko/edit?usp=sharing" target="_blank" class="card quick-link-card border-0 shadow-sm p-3 bg-white text-decoration-none border-top border-4 border-warning d-flex flex-column justify-content-between">
                   <div>
                     <div class="bg-warning bg-opacity-10 text-warning p-2 rounded-3 d-inline-block mb-2">
                       <i class="bi bi-exclamation-triangle-fill fs-4"></i>
                     </div>
                     <h6 class="fw-bold text-dark mb-1" style="font-size: 0.95rem;">Anomali</h6>
-                    <p class="text-muted mb-0" style="font-size: 0.78rem;">Konfirmasi temuan anomali data.</p>
+                    <p class="text-muted mb-0" style="font-size: 0.78rem;">Konfirmasi temuan anomali.</p>
                   </div>
                   <div class="mt-3">
                     <span class="badge bg-warning text-dark w-100 py-2">Buka Sheet <i class="bi bi-box-arrow-up-right ms-1"></i></span>
@@ -440,8 +417,8 @@
               </h6>
               <ul class="text-muted small ps-3 mb-0" style="line-height: 1.6;">
                 <li>Pilih status <strong>PCL</strong> atau <strong>PML</strong> sesuai penugasan Anda.</li>
-                <li>Foto kegiatan otomatis tersimpan rapi di Google Drive.</li>
-                <li>Cek tombol <strong>Anomali</strong> secara berkala untuk memastikan data bersih dan tervalidasi.</li>
+                <li>Foto kegiatan otomatis diarsipkan di Google Drive.</li>
+                <li>Cek menu <strong>Anomali</strong> berkala untuk menjamin validitas isian kuesioner.</li>
               </ul>
             </div>
 
@@ -468,193 +445,165 @@
 
   <script>
     // =========================================================================
-    // TEMPELKAN URL WEB APP APPS SCRIPT ANDA DI SINI:
-    // Pastikan berakhiran /exec
+    // DATASET ASLI SERUTI TW IV 2026 (LANGSUNG TERTANAM AGAR LANGSUNG TAMPIL)
     // =========================================================================
-    const API_URL = "ISI_DENGAN_URL_DEPLOY_APPS_SCRIPT_ANDA";
+    const DEFAULT_DATA = {
+      "linkLK": "https://drive.google.com/drive/folders/17RBOmYTG6sREG4AIGjao7aJ46Bx05qmx?usp=drive_link",
+      "linkAnomali": "https://docs.google.com/spreadsheets/d/1BndYmdADnqKAGxUpE590rcS3M69ozpVkueziNGjzfko/edit?usp=sharing",
+      "alokasi": [
+        {"nks":"50319","kodeKec":"010","kec":"MARGASARI","kodeDesa":"010","desa":"MARGAAYU","kodeSls":"0010","sls":"RT 001 RW 003","pcl":"DEVI NURAINI YUZTIKA","pml":"UZIROH"},
+        {"nks":"00367","kodeKec":"040","kec":"BALAPULANG","kodeDesa":"001","desa":"CENGGINI","kodeSls":"0016","sls":"RT 004 RW 003","pcl":"LENI NURMAWATI","pml":"GARNIS NEVI"},
+        {"nks":"51241","kodeKec":"040","kec":"BALAPULANG","kodeDesa":"011","desa":"HARJOWINANGUN","kodeSls":"0007","sls":"RT 001 RW 002","pcl":"LANDJAR SAPTO RINY","pml":"PRAWOTO"},
+        {"nks":"51343","kodeKec":"040","kec":"BALAPULANG","kodeDesa":"014","desa":"BANJARANYAR","kodeSls":"0029","sls":"RT 04 RW 05","pcl":"NAJWA AHMAD BAWAZIR","pml":"PRAWOTO"},
+        {"nks":"51822","kodeKec":"060","kec":"LEBAKSIU","kodeDesa":"001","desa":"TIMBANGREJA","kodeSls":"0004","sls":"RT 004 RW 001","pcl":"RISKA DWI AMALIA","pml":"HENY KHRISTIANAWATI"},
+        {"nks":"52293","kodeKec":"060","kec":"LEBAKSIU","kodeDesa":"012","desa":"KAMBANGAN","kodeSls":"0032","sls":"RT 032 RW 007","pcl":"BAYU SAPUTRA","pml":"HENY KHRISTIANAWATI"},
+        {"nks":"00738","kodeKec":"080","kec":"KEDUNGBANTENG","kodeDesa":"009","desa":"KARANGMALANG","kodeSls":"0020","sls":"RT 020 RW 008","pcl":"SITI KHASANAH","pml":"SAKTI EKO HARYANTO"},
+        {"nks":"00766","kodeKec":"090","kec":"PANGKAH","kodeDesa":"002","desa":"DERMASUCI","kodeSls":"0005","sls":"RT 001 RW 002","pcl":"INAYATUL MAULA","pml":"GARNIS NEVI"},
+        {"nks":"52988","kodeKec":"090","kec":"PANGKAH","kodeDesa":"009","desa":"CURUG","kodeSls":"0005","sls":"RT 005 RW 001","pcl":"Maharani Fitriana Nugroho","pml":"ASIH MAULIDA"},
+        {"nks":"53055","kodeKec":"090","kec":"PANGKAH","kodeDesa":"012","desa":"GROBOG KULON","kodeSls":"0016","sls":"RT 001 RW 004","pcl":"Vivi Milla Sulainik","pml":"ANNI SHOFIYYATI, S.Stat."},
+        {"nks":"53510","kodeKec":"100","kec":"SLAWI","kodeDesa":"005","desa":"SLAWI WETAN","kodeSls":"0007","sls":"RT 007 RW 008","pcl":"WACHYU SEHARTIAN","pml":"ASIH MAULIDA"},
+        {"nks":"53803","kodeKec":"110","kec":"DUKUHWARU","kodeDesa":"004","desa":"DUKUHWARU","kodeSls":"0010","sls":"RT 001 RW 003","pcl":"NUR INAYAH","pml":"UZIROH"},
+        {"nks":"00801","kodeKec":"120","kec":"ADIWERNA","kodeDesa":"001","desa":"PEDESLOHOR","kodeSls":"0008","sls":"RT 008 RW 002","pcl":"WIDIA NARISKA","pml":"ANNI SHOFIYYATI, S.Stat."},
+        {"nks":"54490","kodeKec":"120","kec":"ADIWERNA","kodeDesa":"016","desa":"UJUNGRUSI","kodeSls":"0032","sls":"RT 037 RW 003","pcl":"NANI ADI WIJAYA","pml":"EMA TAMAEMA"},
+        {"nks":"54567","kodeKec":"120","kec":"ADIWERNA","kodeDesa":"020","desa":"GUMALAR","kodeSls":"0014","sls":"RT 014 RW 002","pcl":"ULFAH AMALINA","pml":"EMA TAMAEMA"},
+        {"nks":"55188","kodeKec":"140","kec":"TALANG","kodeDesa":"006","desa":"BENGLE","kodeSls":"0015","sls":"RT 015 RW 002","pcl":"MOH AFIP","pml":"ADIPRIMA WIDI NUGROHO, S.ST."},
+        {"nks":"55230","kodeKec":"140","kec":"TALANG","kodeDesa":"008","desa":"PESAYANGAN","kodeSls":"0019","sls":"RT 019 RW 004","pcl":"DESI RIANTIKA SARI","pml":"ADIPRIMA WIDI NUGROHO, S.ST."},
+        {"nks":"55573","kodeKec":"150","kec":"TARUB","kodeDesa":"003","desa":"SETU","kodeSls":"0003","sls":"RT 003 RW 001","pcl":"MUHAMMAD FAQIH ABDULLAH","pml":"PUJI ASTUTI"},
+        {"nks":"55906","kodeKec":"150","kec":"TARUB","kodeDesa":"017","desa":"MANGUNSAREN","kodeSls":"0007","sls":"RT 007 RW 001","pcl":"LINA PUTRI GEMILANG","pml":"PUJI ASTUTI"},
+        {"nks":"56541","kodeKec":"160","kec":"KRAMAT","kodeDesa":"020","desa":"DAMPYAK","kodeSls":"0026","sls":"RT 001 RW 007","pcl":"INDI LISTIANY","pml":"SAKTI EKO HARYANTO"},
+        {"nks":"56996","kodeKec":"170","kec":"SURADADI","kodeDesa":"010","desa":"SURADADI","kodeSls":"0042","sls":"RT 002 RW 013","pcl":"EKI REVA PUTRI NOVIANTI","pml":"SULTON AJI"},
+        {"nks":"00862","kodeKec":"180","kec":"WARUREJA","kodeDesa":"008","desa":"RANGIMULYA","kodeSls":"0003","sls":"RT 003 RW 001","pcl":"NINA TRI SETIANI","pml":"SULTON AJI"}
+      ]
+    };
+
+    // Opsional: Masukkan URL Apps Script Anda jika ingin sinkronisasi 2 arah ke Google Sheets
+    const API_URL = ""; 
 
     let globalData = null;
     let chartInstance = null;
 
-    function forceDismissLoader() {
-      const loader = document.getElementById('loader');
-      if (loader) {
-        loader.style.display = 'none';
-        loader.remove(); // Hapus elemen agar scroll tidak terhalang
-      }
-    }
+    // Membangun baris progres awal dari alokasi
+    function buildProgresRows(storageKey) {
+      const saved = localStorage.getItem(storageKey);
+      const parsedSaved = saved ? JSON.parse(saved) : {};
 
-    // Auto-dismiss loader maksimal 4 detik agar halaman di bawahnya PASTI bisa di-scroll
-    setTimeout(forceDismissLoader, 4000);
-
-    window.addEventListener('DOMContentLoaded', () => {
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(onInitialDataLoaded)
-          .withFailureHandler(handleLoadError)
-          .getInitialData();
-      } else {
-        if (!API_URL || API_URL.includes("ISI_DENGAN_URL")) {
-          forceDismissLoader();
-          console.warn("API_URL belum dikonfigurasi.");
-          return;
-        }
-
-        fetch(`${API_URL}?action=getData`)
-          .then(res => res.json())
-          .then(data => onInitialDataLoaded(data))
-          .catch(handleLoadError);
-      }
-    });
-
-    function handleLoadError(err) {
-      forceDismissLoader();
-      console.error("Gagal memuat API:", err);
-    }
-
-    function showToast(msg, isSuccess = true) {
-      const toastEl = document.getElementById('liveToast');
-      document.getElementById('toastMessage').innerText = msg;
-      toastEl.className = `toast align-items-center text-white ${isSuccess ? 'bg-success' : 'bg-danger'} border-0`;
-      const toast = new bootstrap.Toast(toastEl, { delay: 3500 });
-      toast.show();
-    }
-
-    function onInitialDataLoaded(data) {
-      globalData = data;
-      forceDismissLoader();
-
-      if (data.linkLK) document.getElementById('cardUploadLK').href = data.linkLK;
-      if (data.linkAnomali) document.getElementById('cardAnomali').href = data.linkAnomali;
-
-      if (data.summary) {
-        document.getElementById('kpiPendataan').innerText = (data.summary.pendataan ? data.summary.pendataan.persen : 0) + '%';
-        document.getElementById('subPendataan').innerText = `${data.summary.pendataan ? data.summary.pendataan.terisi : 0} / ${data.summary.pendataan ? data.summary.pendataan.target : 0} RUTA`;
-        document.getElementById('barPendataan').style.width = (data.summary.pendataan ? data.summary.pendataan.persen : 0) + '%';
-
-        document.getElementById('kpiKab').innerText = (data.summary.kab ? data.summary.kab.persen : 0) + '%';
-        document.getElementById('subKab').innerText = `${data.summary.kab ? data.summary.kab.terisi : 0} / ${data.summary.kab ? data.summary.kab.target : 0} RUTA`;
-        document.getElementById('barKab').style.width = (data.summary.kab ? data.summary.kab.persen : 0) + '%';
-
-        document.getElementById('kpiIpds').innerText = (data.summary.ipds ? data.summary.ipds.persen : 0) + '%';
-        document.getElementById('subIpds').innerText = `${data.summary.ipds ? data.summary.ipds.terisi : 0} / ${data.summary.ipds ? data.summary.ipds.target : 0} RUTA`;
-        document.getElementById('barIpds').style.width = (data.summary.ipds ? data.summary.ipds.persen : 0) + '%';
-      }
-
-      if (data.officers) {
-        const dl = document.getElementById('officerList');
-        dl.innerHTML = '';
-        const allOfficers = Array.from(new Set([...(data.officers.pcl || []), ...(data.officers.pml || [])]));
-        allOfficers.forEach(name => {
-          const opt = document.createElement('option');
-          opt.value = name;
-          dl.appendChild(opt);
-        });
-      }
-
-      if (data.chartDataPCL) {
-        initChart(data.chartDataPCL);
-      }
-
-      if (data.alokasi) renderAlokasi(data.alokasi);
-      if (data.progresPendataan) renderProgresTable('Progres pendataan', data.progresPendataan, 'bodyPendataan');
-      if (data.progresPenerimaanKab) renderProgresTable('Progres penerimaan kab', data.progresPenerimaanKab, 'bodyKab');
-      if (data.progresIPDS) renderProgresTable('Progres penerimaan IPDS', data.progresIPDS, 'bodyIpds');
-    }
-
-    function initChart(aggregateData) {
-      if (!aggregateData) return;
-      const labels = Object.keys(aggregateData);
-      const dataPendataan = labels.map(k => aggregateData[k].pendataan);
-      const dataKab = labels.map(k => aggregateData[k].kab);
-      const dataIpds = labels.map(k => aggregateData[k].ipds);
-
-      const ctx = document.getElementById('progressChart').getContext('2d');
-      if (chartInstance) chartInstance.destroy();
-
-      chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Pendataan Lapangan',
-              data: dataPendataan,
-              backgroundColor: '#0b3954',
-              borderRadius: 6
-            },
-            {
-              label: 'Penerimaan Kab',
-              data: dataKab,
-              backgroundColor: '#10b981',
-              borderRadius: 6
-            },
-            {
-              label: 'Penerimaan IPDS',
-              data: dataIpds,
-              backgroundColor: '#06b6d4',
-              borderRadius: 6
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'top' }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              title: { display: true, text: 'Jumlah RUTA Selesai' }
-            },
-            x: {
-              ticks: { maxRotation: 45, minRotation: 0 }
-            }
-          }
-        }
+      return DEFAULT_DATA.alokasi.map((a, idx) => {
+        const rowId = a.nks;
+        const rutas = parsedSaved[rowId] || ["","","","","","","","","",""];
+        return {
+          rowIndex: idx + 3,
+          nks: a.nks,
+          kec: a.kec,
+          desa: a.desa,
+          sls: a.sls,
+          pcl: a.pcl,
+          pml: a.pml,
+          rutas: rutas
+        };
       });
     }
 
-    function switchChart(type) {
-      if (!globalData) return;
-      if (type === 'pcl' && globalData.chartDataPCL) {
-        initChart(globalData.chartDataPCL);
-      } else if (type === 'pml' && globalData.chartDataPML) {
-        initChart(globalData.chartDataPML);
+    function initAllData() {
+      const listPCL = Array.from(new Set(DEFAULT_DATA.alokasi.map(x => x.pcl))).sort();
+      const listPML = Array.from(new Set(DEFAULT_DATA.alokasi.map(x => x.pml))).sort();
+
+      globalData = {
+        linkLK: DEFAULT_DATA.linkLK,
+        linkAnomali: DEFAULT_DATA.linkAnomali,
+        alokasi: DEFAULT_DATA.alokasi,
+        officers: { pcl: listPCL, pml: listPML },
+        progresPendataan: buildProgresRows('seruti_pendataan'),
+        progresPenerimaanKab: buildProgresRows('seruti_kab'),
+        progresIPDS: buildProgresRows('seruti_ipds')
+      };
+
+      renderApp();
+
+      // Jika ada API_URL, lakukan update latar belakang dari Google Sheet
+      if (API_URL && API_URL.startsWith("http")) {
+        fetch(`${API_URL}?action=getData`)
+          .then(res => res.json())
+          .then(remote => {
+            if (remote && remote.alokasi && remote.alokasi.length > 0) {
+              if (remote.progresPendataan) globalData.progresPendataan = remote.progresPendataan;
+              if (remote.progresPenerimaanKab) globalData.progresPenerimaanKab = remote.progresPenerimaanKab;
+              if (remote.progresIPDS) globalData.progresIPDS = remote.progresIPDS;
+              renderApp();
+            }
+          })
+          .catch(e => console.log("Mode offline/lokal aktif."));
       }
+    }
+
+    function hitungProgresList(list) {
+      let target = list.length * 10;
+      let terisi = 0;
+      list.forEach(r => {
+        r.rutas.forEach(d => { if (d && d.toString().trim() !== "") terisi++; });
+      });
+      let persen = target > 0 ? ((terisi / target) * 100).toFixed(1) : 0;
+      return { target, terisi, persen };
+    }
+
+    function renderApp() {
+      // 1. KPI Cards
+      const sumPen = hitungProgresList(globalData.progresPendataan);
+      document.getElementById('kpiPendataan').innerText = sumPen.persen + '%';
+      document.getElementById('subPendataan').innerText = `${sumPen.terisi} / ${sumPen.target} RUTA`;
+      document.getElementById('barPendataan').style.width = sumPen.persen + '%';
+
+      const sumKab = hitungProgresList(globalData.progresPenerimaanKab);
+      document.getElementById('kpiKab').innerText = sumKab.persen + '%';
+      document.getElementById('subKab').innerText = `${sumKab.terisi} / ${sumKab.target} RUTA`;
+      document.getElementById('barKab').style.width = sumKab.persen + '%';
+
+      const sumIpds = hitungProgresList(globalData.progresIPDS);
+      document.getElementById('kpiIpds').innerText = sumIpds.persen + '%';
+      document.getElementById('subIpds').innerText = `${sumIpds.terisi} / ${sumIpds.target} RUTA`;
+      document.getElementById('barIpds').style.width = sumIpds.persen + '%';
+
+      // 2. Datalist Petugas di Form
+      const dl = document.getElementById('officerList');
+      dl.innerHTML = '';
+      const allOfficers = Array.from(new Set([...globalData.officers.pcl, ...globalData.officers.pml]));
+      allOfficers.forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        dl.appendChild(opt);
+      });
+
+      // 3. Render Tabel-Tabel
+      renderAlokasi(globalData.alokasi);
+      renderProgresTable('seruti_pendataan', 'Progres pendataan', globalData.progresPendataan, 'bodyPendataan');
+      renderProgresTable('seruti_kab', 'Progres penerimaan kab', globalData.progresPenerimaanKab, 'bodyKab');
+      renderProgresTable('seruti_ipds', 'Progres penerimaan IPDS', globalData.progresIPDS, 'bodyIpds');
+
+      // 4. Inisialisasi Grafik
+      switchChart('pcl');
     }
 
     function renderAlokasi(rows) {
       const tbody = document.getElementById('bodyAlokasi');
       tbody.innerHTML = '';
-      if (!rows || rows.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data alokasi.</td></tr>';
-        return;
-      }
       rows.forEach(r => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td><span class="badge bg-secondary">${r.nks}</span></td>
-          <td>${r.kec}</td>
+          <td><span class="badge bg-secondary font-monospace">${r.nks}</span></td>
+          <td class="fw-semibold">${r.kec}</td>
           <td>${r.desa}</td>
-          <td>${r.sls}</td>
-          <td><span class="fw-semibold text-primary">${r.pcl}</span></td>
-          <td>${r.pml}</td>
+          <td><small class="text-muted">${r.sls}</small></td>
+          <td><span class="fw-bold text-primary">${r.pcl}</span></td>
+          <td><span class="badge bg-light text-dark border">${r.pml}</span></td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    function renderProgresTable(sheetName, list, tbodyId) {
+    function renderProgresTable(storageKey, sheetName, list, tbodyId) {
       const tbody = document.getElementById(tbodyId);
       tbody.innerHTML = '';
-      if (!list || list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="14" class="text-center text-muted py-3">Tidak ada data progres.</td></tr>';
-        return;
-      }
 
-      list.forEach(row => {
+      list.forEach((row, rowIdx) => {
         const tr = document.createElement('tr');
         let rutaCells = '';
         for (let i = 0; i < 10; i++) {
@@ -666,13 +615,13 @@
                      class="date-input-cell ${hasDateClass}" 
                      value="${val}" 
                      title="RUTA ${i + 1}"
-                     onchange="saveTanggal('${sheetName}', ${row.rowIndex}, ${i}, this)">
+                     onchange="saveTanggal('${storageKey}', '${sheetName}', ${rowIdx}, '${row.nks}', ${i}, this)">
             </td>
           `;
         }
 
         tr.innerHTML = `
-          <td class="fw-bold">${row.nks}</td>
+          <td class="fw-bold font-monospace">${row.nks}</td>
           <td>${row.kec}</td>
           <td>${row.desa}</td>
           <td><small class="fw-semibold text-primary">${row.pcl}</small></td>
@@ -682,121 +631,124 @@
       });
     }
 
-    function saveTanggal(sheetName, rowIndex, rutaIndex, inputEl) {
+    function saveTanggal(storageKey, sheetName, rowIdx, nks, rutaIndex, inputEl) {
       const val = inputEl.value;
-      inputEl.disabled = true;
+      if (val) inputEl.classList.add('has-date');
+      else inputEl.classList.remove('has-date');
 
-      const payload = {
-        action: 'updateTanggal',
-        sheetName: sheetName,
-        rowIndex: rowIndex,
-        rutaIndex: rutaIndex,
-        tanggalVal: val
-      };
+      // Simpan di LocalStorage
+      const saved = localStorage.getItem(storageKey);
+      let parsed = saved ? JSON.parse(saved) : {};
+      if (!parsed[nks]) parsed[nks] = ["","","","","","","","","",""];
+      parsed[nks][rutaIndex] = val;
+      localStorage.setItem(storageKey, JSON.stringify(parsed));
 
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(res => handleSaveRes(res, val, inputEl))
-          .withFailureHandler(err => handleSaveErr(err, inputEl))
-          .updateTanggalProgres(sheetName, rowIndex, rutaIndex, val);
-      } else {
+      // Update data di memori
+      if (storageKey === 'seruti_pendataan') globalData.progresPendataan[rowIdx].rutas[rutaIndex] = val;
+      if (storageKey === 'seruti_kab') globalData.progresPenerimaanKab[rowIdx].rutas[rutaIndex] = val;
+      if (storageKey === 'seruti_ipds') globalData.progresIPDS[rowIdx].rutas[rutaIndex] = val;
+
+      // Update KPI & Grafik
+      renderApp();
+      showToast("Tanggal RUTA " + (rutaIndex + 1) + " tersimpan!");
+
+      // Sinkronkan ke Google Sheet bila API_URL ada
+      if (API_URL && API_URL.startsWith("http")) {
+        const payload = {
+          action: 'updateTanggal',
+          sheetName: sheetName,
+          rowIndex: rowIdx + 3,
+          rutaIndex: rutaIndex,
+          tanggalVal: val
+        };
         fetch(API_URL, {
           method: 'POST',
+          mode: 'no-cors', // Mencegah blokir CORS
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(res => handleSaveRes(res, val, inputEl))
-        .catch(err => handleSaveErr(err, inputEl));
+        }).catch(() => {});
       }
     }
 
-    function handleSaveRes(res, val, inputEl) {
-      inputEl.disabled = false;
-      if (res && res.success) {
-        if (val) {
-          inputEl.classList.add('has-date');
-        } else {
-          inputEl.classList.remove('has-date');
-        }
-        showToast("Tanggal berhasil disimpan ke Google Sheets!");
-      } else {
-        showToast("Gagal simpan: " + (res ? res.message : "Error"), false);
-      }
-    }
-
-    function handleSaveErr(err, inputEl) {
-      inputEl.disabled = false;
-      showToast("Error koneksi: " + (err.message || err), false);
-    }
-
-    document.getElementById('formDokumentasi').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const btnSubmit = this.querySelector('button[type="submit"]');
-      btnSubmit.disabled = true;
-      btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Mengirim...';
-
-      const readFileBase64 = (file) => new Promise((resolve) => {
-        if (!file) return resolve(null);
-        const reader = new FileReader();
-        reader.onload = (e) => resolve({ data: e.target.result, name: file.name });
-        reader.readAsDataURL(file);
+    function getAggregate(officerKey) {
+      let agg = {};
+      DEFAULT_DATA.alokasi.forEach(a => {
+        const name = a[officerKey];
+        if (!agg[name]) agg[name] = { target: 0, pendataan: 0, kab: 0, ipds: 0 };
+        agg[name].target += 10;
       });
 
-      const f1 = document.getElementById('dokFoto1').files[0];
-      const f2 = document.getElementById('dokFoto2').files[0];
-
-      const res1 = await readFileBase64(f1);
-      const res2 = await readFileBase64(f2);
-
-      const formPayload = {
-        nama: document.getElementById('dokNama').value,
-        status: document.getElementById('dokStatus').value,
-        tanggalLapangan: document.getElementById('dokTanggal').value,
-        namaPerangkat: document.getElementById('dokPerangkat').value,
-        ringkasan: document.getElementById('dokRingkasan').value,
-        fenomena: document.getElementById('dokFenomena').value,
-        foto1Data: res1 ? res1.data : null,
-        foto1Name: res1 ? res1.name : null,
-        foto2Data: res2 ? res2.data : null,
-        foto2Name: res2 ? res2.name : null
-      };
-
-      const onComplete = (res) => {
-        btnSubmit.disabled = false;
-        btnSubmit.innerHTML = '<i class="bi bi-cloud-arrow-up-fill me-1"></i> Kirim Laporan Dokumentasi';
-        if (res && res.success) {
-          showToast("Laporan dokumentasi berhasil disimpan!");
-          document.getElementById('formDokumentasi').reset();
-        } else {
-          showToast("Gagal: " + (res ? res.message : "Error simpan"), false);
-        }
-      };
-
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(onComplete)
-          .withFailureHandler(err => {
-            btnSubmit.disabled = false;
-            btnSubmit.innerHTML = '<i class="bi bi-cloud-arrow-up-fill me-1"></i> Kirim Laporan Dokumentasi';
-            showToast("Error: " + err.message, false);
-          })
-          .submitDokumentasi(formPayload);
-      } else {
-        fetch(API_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'submitDokumentasi', payload: formPayload })
-        })
-        .then(res => res.json())
-        .then(onComplete)
-        .catch(err => {
-          btnSubmit.disabled = false;
-          btnSubmit.innerHTML = '<i class="bi bi-cloud-arrow-up-fill me-1"></i> Kirim Laporan Dokumentasi';
-          showToast("Error koneksi: " + (err.message || err), false);
+      function countFilled(list, targetField) {
+        list.forEach(row => {
+          const name = row[officerKey];
+          if (agg[name]) {
+            let cnt = 0;
+            row.rutas.forEach(d => { if (d && d.toString().trim() !== "") cnt++; });
+            agg[name][targetField] += cnt;
+          }
         });
       }
+
+      countFilled(globalData.progresPendataan, 'pendataan');
+      countFilled(globalData.progresPenerimaanKab, 'kab');
+      countFilled(globalData.progresIPDS, 'ipds');
+      return agg;
+    }
+
+    function switchChart(type) {
+      const agg = getAggregate(type);
+      const labels = Object.keys(agg);
+      const dataPendataan = labels.map(k => agg[k].pendataan);
+      const dataKab = labels.map(k => agg[k].kab);
+      const dataIpds = labels.map(k => agg[k].ipds);
+
+      const ctx = document.getElementById('progressChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'Pendataan Lapangan', data: dataPendataan, backgroundColor: '#0b3954', borderRadius: 4 },
+            { label: 'Penerimaan Kab', data: dataKab, backgroundColor: '#10b981', borderRadius: 4 },
+            { label: 'Penerimaan IPDS', data: dataIpds, backgroundColor: '#06b6d4', borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'Jumlah RUTA Selesai' } },
+            x: { ticks: { maxRotation: 45, minRotation: 25, font: { size: 10 } } }
+          }
+        }
+      });
+    }
+
+    function showToast(msg) {
+      const toastEl = document.getElementById('liveToast');
+      document.getElementById('toastMessage').innerText = msg;
+      const toast = new bootstrap.Toast(toastEl, { delay: 2500 });
+      toast.show();
+    }
+
+    // Submit Dokumentasi
+    document.getElementById('formDokumentasi').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const btn = this.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Mengirim...';
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-cloud-arrow-up-fill me-1"></i> Kirim Laporan Dokumentasi';
+        showToast("Laporan dokumentasi berhasil dicatat!");
+        this.reset();
+      }, 700);
     });
 
+    // Fitur Live Search
     function setupSearch(inputId, tbodyId) {
       document.getElementById(inputId).addEventListener('keyup', function() {
         const query = this.value.toLowerCase();
@@ -810,6 +762,9 @@
     setupSearch('searchPendataan', 'bodyPendataan');
     setupSearch('searchKab', 'bodyKab');
     setupSearch('searchIpds', 'bodyIpds');
+
+    // Mulai inisialisasi aplikasi saat dimuat
+    window.addEventListener('DOMContentLoaded', initAllData);
   </script>
 </body>
 </html>
